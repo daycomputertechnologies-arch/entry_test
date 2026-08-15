@@ -144,8 +144,23 @@ contract FreelanceBountyBoard {
     }
 
     // ============ TODO 4: Submit Work ============
-    function submitWork(uint256 bountyId, string memory submission) external {
-        // TODO: Implement this
+    function submitWork(uint256 bountyId, string memory submission) external 
+        bountyExists(bountyId)
+        onlyAssignedFreelancer(bountyId)
+        inStatus(bountyId, Status.Assigned)
+    {
+        // Check: Submission is not empty
+        require(bytes(submission).length > 0, "Submission cannot be empty");
+        
+        // Check: Deadline not passed
+        require(block.timestamp < bounties[bountyId].deadline, "Bounty expired");
+        
+        // Store the submission
+        bounties[bountyId].workSubmission = submission;
+        bounties[bountyId].status = Status.Submitted;
+        
+        // Emit event
+        emit WorkSubmitted(bountyId, msg.sender, submission);
     }
 
     // ============ TODO 5: Approve and Pay ============
