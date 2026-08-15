@@ -64,7 +64,17 @@ contract DecentralisedRaffle {
 
     // ============ TODO 1: Enter Raffle ============
     function enterRaffle() external payable whenNotPaused raffleActive {
-        // TODO: Implement this
+        // Check: Exact entry fee
+        require(msg.value == entryFee, "Must send exactly 0.01 ETH");
+        
+        // Add player to the list
+        players.push(msg.sender);
+        
+        // Increment entry count for this player
+        entryCount[msg.sender]++;
+        
+        // Emit event
+        emit RaffleEntered(msg.sender, entryCount[msg.sender]);
     }
 
     // ============ TODO 2: Pause/Unpause ============
