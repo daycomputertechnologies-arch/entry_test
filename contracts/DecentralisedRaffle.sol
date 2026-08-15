@@ -129,7 +129,29 @@ contract DecentralisedRaffle {
 
     // ============ TODO 4: Reset Raffle ============
     function resetRaffle() external onlyOwner {
-        // TODO: Implement this
+        // Reset entry counts for all previous players
+        // We need to iterate through players before clearing
+        uint256 playerCount = players.length;
+        for (uint256 i = 0; i < playerCount; i++) {
+            entryCount[players[i]] = 0;
+        }
+        
+        // Clear players array
+        delete players;
+        
+        // Reset winner state
+        winner = address(0);
+        winnerDrawn = false;
+        
+        // Reset raffle timings
+        raffleStartTime = block.timestamp;
+        raffleEndTime = block.timestamp + DURATION;
+        
+        // Unpause if paused
+        paused = false;
+        
+        // Emit event
+        emit RaffleReset();
     }
 
     // ============ HELPER: Get Players ============
