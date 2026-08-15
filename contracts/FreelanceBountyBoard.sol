@@ -164,7 +164,31 @@ contract FreelanceBountyBoard {
     }
 
     // ============ TODO 5: Approve and Pay ============
-    function approveAndPay(uint256 bountyId) external {
-        // TODO: Implement this
+    function approveAndPay(uint256 bountyId) external 
+        bountyExists(bountyId)
+        onlyEmployer(bountyId)
+        inStatus(bountyId, Status.Submitted)
+    {
+        Bounty storage bounty = bounties[bountyId];
+        address freelancer = bounty.assignedFreelancer;
+        uint256 amount = bounty.amount;
+        
+        // Check: Deadline not passed (employer must approve before deadline)
+        require(block.timestamp < bounty.deadline, "Bounty expired");
+        
+        // ==============================================
+        // EFFECTS: Update state FIRST (Re-entrancy protection)
+        // ==============================================
+        bounty.status = Status.Completed;
+        freelancers[freelancer].jobsCompleted += 1;
+        
+        // ==============================================
+        // INTERACTIONS: Send ETH LAST
+        // ==============================================
+        (bool success, ) = payable(freelancer).call{value: amount}("");
+        require(success, "Transfer failed");
+        
+        // Emit event
+        emit BountyPaid(bountyId, freelancer, amount);
     }
 }
