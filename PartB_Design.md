@@ -131,3 +131,48 @@ Oracle Problem" is. List 3-5.
 [Write your future learning goals]
 
 ---
+## Randomness
+
+### What randomness method did I use?
+
+In my `DecentralisedRaffle.sol`, the `drawWinner()` function uses this approach:
+
+```solidity
+uint256 randomIndex = uint256(
+    keccak256(abi.encodePacked(block.timestamp, block.prevrandao, players.length))
+) % players.length;
+
+### Who can manipulate this?
+
+The block proposer (validator/miner) has the most power. They can:
+- Slightly change `block.timestamp` within acceptable limits
+- Choose which transactions to include in the block
+- Potentially influence `block.prevrandao`
+
+Also, anyone watching the mempool can:
+- See the `drawWinner()` transaction before it's mined
+- Calculate who will win in advance
+- Front-run the transaction to change the outcome
+
+### How could an attacker use this?
+
+1. A validator sees the `drawWinner()` transaction in the mempool
+2. They calculate the current random outcome
+3. If the outcome doesn't favor them or someone they control, they can:
+   - Delay the transaction to a later block
+   - Slightly adjust `block.timestamp` to change the hash
+   - Reorder transactions to change `players.length`
+
+This means they could influence who wins.
+
+### What would be a better solution?
+
+In a production app, I would use **Chainlink VRF (Verifiable Random Function)**:
+- It requests randomness from an oracle network
+- Each result comes with cryptographic proof it's truly random
+- No single party (not even Chainlink) can manipulate the outcome
+- It's the industry standard for blockchain lotteries and raffles
+
+### Honesty statement
+
+I know this simple randomness approach is NOT secure for real money. For this 3-hour assessment, I used the shortcut the README allowed. In a real project, I would implement Chainlink VRF.
