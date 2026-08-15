@@ -98,7 +98,32 @@ contract FreelanceBountyBoard {
 
     // ============ TODO 2: Post Bounties ============
     function postBounty(string memory description, uint256 deadline) external payable {
-        // TODO: Implement this
+        // Check: Must send some ETH
+        require(msg.value > 0, "Must send ETH for bounty");
+        
+        // Check: Description is not empty
+        require(bytes(description).length > 0, "Description cannot be empty");
+        
+        // Check: Deadline is in the future
+        require(deadline > block.timestamp, "Deadline must be in the future");
+        
+        // Create a new bounty
+        uint256 bountyId = bountyCounter;
+        bountyCounter++;
+        
+        bounties[bountyId] = Bounty({
+            employer: msg.sender,
+            description: description,
+            amount: msg.value,
+            status: Status.Open,
+            assignedFreelancer: address(0),
+            workSubmission: "",
+            deadline: deadline,
+            createdAt: block.timestamp
+        });
+        
+        // Emit the event
+        emit BountyPosted(bountyId, msg.sender, msg.value);
     }
 
     // ============ TODO 3: Apply to Bounties ============
