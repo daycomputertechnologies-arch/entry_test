@@ -79,7 +79,11 @@ contract DecentralisedRaffle {
 
     // ============ TODO 2: Pause/Unpause ============
     function togglePause() external onlyOwner {
-        // TODO: Implement this
+        // Toggle the pause state
+        paused = !paused;
+        
+        // Emit event
+        emit RafflePaused(paused);
     }
 
     // ============ TODO 3: Draw Winner ============
