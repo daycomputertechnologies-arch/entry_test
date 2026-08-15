@@ -127,8 +127,20 @@ contract FreelanceBountyBoard {
     }
 
     // ============ TODO 3: Apply to Bounties ============
-    function applyToBounty(uint256 bountyId) external {
-        // TODO: Implement this
+    function applyToBounty(uint256 bountyId) external 
+        onlyRegisteredFreelancer
+        bountyExists(bountyId)
+        inStatus(bountyId, Status.Open)
+    {
+        // Check: Deadline not passed
+        require(block.timestamp < bounties[bountyId].deadline, "Bounty expired");
+        
+        // Assign the freelancer
+        bounties[bountyId].assignedFreelancer = msg.sender;
+        bounties[bountyId].status = Status.Assigned;
+        
+        // Emit event
+        emit BountyApplied(bountyId, msg.sender);
     }
 
     // ============ TODO 4: Submit Work ============
