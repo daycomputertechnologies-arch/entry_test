@@ -56,11 +56,10 @@ database?"*
 - **D)** "Because a database can only handle a few thousand users, and
   blockchains scale infinitely."
 
-**Your Answer:** [A/B/C/D]
+**Your Answer:** B
 
-**Your Reasoning:**
-[2-3 sentences. What is the actual property a blockchain provides here? Name one
-honest cost of choosing it.]
+**Your Reasoning:** 
+[Blockchain is a system that keeps records in a way that no single person or group can change the history on their own. Everyone involved can check and trust the records independently. However, this security and fairness come with a trade-off: blockchain is slower and more expensive to use than a regular centralized database.]
 
 ---
 
@@ -79,16 +78,15 @@ You send a simple ETH transfer on Ethereum.
 - **C)** 0.00042 ETH (about $1.26)
 - **D)** 0.0042 ETH (about $12.60)
 
-**Your Answer:** [A/B/C/D]
+**Your Answer:** C
 
 **Your Calculation:**
 
-- Total gas cost in gwei = [show your working]
-- Converted to ETH (remember: 1 ETH = 1,000,000,000 gwei) = [show your working]
-- Converted to USD = [show your working]
+- Total gas cost in gwei = 21,000 × 20 = 420,000 gwei
+- Converted to ETH (remember: 1 ETH = 1,000,000,000 gwei) = 420,000 / 1,000,000,000 = 0.00042 ETH
+- Converted to USD = 0.00042 × $3,000 = **$1.26**
 
-[Then, in one or two sentences: why does a smart contract function that writes
-to storage cost far more than this simple transfer?]
+[Sending ETH just changes the amount of money between two people. But when a smart contract saves new information, it costs more because it takes more work to keep that data safe and permanent. This means it uses more computer power and costs more fees, especially when adding new data.]
 
 ---
 
@@ -109,12 +107,10 @@ Your smart contract needs to know the current ETH/USD price.
   in a future upgrade.
 - **D)** Because API providers block blockchain nodes for security reasons.
 
-**Your Answer:** [A/B/C/D]
+**Your Answer:** B
 
 **Your Reasoning:**
-[2-3 sentences. Why would a single company running the only oracle undermine the
-point of building on a blockchain? What does a decentralised oracle network do
-about that?]
+[A blockchain makes sure everyone gets the same result after a transaction. But if outside data, like prices, changes for different people, it causes problems. If only one company provides the data, it can control and change it. Decentralized oracles, like Chainlink, get data from many places so no one can cheat, and everyone agrees on the same correct number.]
 
 ---
 
@@ -133,11 +129,10 @@ about that?]
   attacker their own stake. The cost of that stake is also what makes Sybil
   attacks - one actor spinning up thousands of fake nodes - uneconomic.
 
-**Your Answer:** [A/B/C/D]
+**Your Answer:** D
 
 **Your Reasoning:**
-[2-3 sentences. What does an attacker actually need to acquire to threaten a PoS
-chain, and what do they stand to lose? Name one difference from Proof of Work.]
+[To attack a Proof of Stake (PoS) blockchain, someone needs to own most of the staked coins, which costs a lot of money. If they try to cheat, they can lose all their coins as a penalty. This makes attacking very risky and expensive. Unlike Proof of Work (PoW) that uses lots of electricity and machines, PoS uses money that is locked up as a way to keep the system safe.]
 
 ---
 
@@ -157,11 +152,10 @@ chain, and what do they stand to lose? Name one difference from Proof of Work.]
 - **D)** It reduces gas costs by lowering the base fee on Ethereum itself
   whenever the rollup is active.
 
-**Your Answer:** [A/B/C/D]
+**Your Answer:** A
 
 **Your Reasoning:**
-[2-3 sentences. Most rollups today run a single centralised sequencer. What can
-that sequencer do to you, and what can it *not* do?]
+[A rollup groups many transactions together outside of Ethereum and then sends a single summary to Ethereum. This spreads the cost among many users, making fees much cheaper while still using Ethereum’s strong security. The company controlling the order of transactions can delay or change the order, but they can’t steal your money or send wrong data because Ethereum checks everything. If they act badly, users can still send transactions directly to Ethereum to be included.]
 
 ---
 
@@ -184,11 +178,10 @@ them.
 - **D)** The seed phrase is just a backup of your public address, which is why it
   is safe to share with support staff if you get stuck.
 
-**Your Answer:** [A/B/C/D]
+**Your Answer:** C
 
 **Your Reasoning:**
-[2-3 sentences. What does a signature prove? What is the trade-off a user accepts
-by holding their own keys, and what does account abstraction do to soften it?]
+[A digital signature shows that the owner of a private key approved a transaction without sharing the key. Holding your own keys means you control your money and no one can block you, but you’re also responsible for keeping your keys safe. If you lose them, there’s no way to reset like a password. Account abstraction (EIP-4337) helps by letting smart wallets add features like asking trusted friends to help recover access, so you don’t need a central company to fix lost keys.]
 
 ---
 
@@ -223,12 +216,10 @@ uint256 index = uint256(
 - **D)** It is insecure on Ethereum but safe on a Layer 2, because the sequencer
   orders transactions privately.
 
-**Your Answer:** [A/B/C/D]
+**Your Answer:** B
 
 **Your Reasoning:**
-[2-3 sentences. Who specifically can manipulate this draw, and what would they
-have to do? You will implement this shortcut in Part B anyway - so be clear
-about what you are shipping.]
+[The block creator (validator) can look at waiting transactions and decide which to include, change their order, or delay them. They can also make a different block to change important values to their advantage. Anyone can see these values and try to jump ahead or behind in the raffle to win.]
 
 ---
 
@@ -262,11 +253,10 @@ function approveAndPay(uint256 bountyId, address freelancer) external {
 - **D)** The `require` on `msg.sender` should use `tx.origin` instead, so that
   contracts cannot call the function at all.
 
-**Your Answer:** [A/B/C/D]
+**Your Answer:** C
 
 **Your Reasoning:**
-[2-3 sentences. Walk through the exact sequence an attacking contract would use.
-Then apply the fix in your own `approveAndPay` - it is auto-marked.]
+[The ETH would be received in the receive() function of an attacking contract, and the approveAndPay() function would be called again on that bounty ID inside the same receive(). Since the status is still Status.Pending (not yet updated), the check in the require statement passes and ETH is sent again, thus draining the contract's balance repeatedly until nothing is left. The solution is checks-effects-interactions; in this case we update b.status = Status.Completed before making the external call, therefore any re-entrant call will not pass the status check.]
 
 ---
 
