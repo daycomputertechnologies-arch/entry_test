@@ -88,7 +88,43 @@ contract DecentralisedRaffle {
 
     // ============ TODO 3: Draw Winner ============
     function drawWinner() external raffleEnded {
-        // TODO: Implement this
+        // Check: Winner not already drawn
+        require(!winnerDrawn, "Winner already drawn");
+        
+        // Check: At least one player
+        require(players.length > 0, "No players entered");
+        
+        // Generate random index (simple approach - allowed per README)
+        uint256 randomIndex = uint256(
+            keccak256(abi.encodePacked(block.timestamp, block.prevrandao, players.length))
+        ) % players.length;
+        
+        // Select winner
+        winner = players[randomIndex];
+        winnerDrawn = true;
+        
+        // Calculate amounts
+        uint256 totalPrize = address(this).balance;
+        uint256 winnerAmount = (totalPrize * 90) / 100;  // 90%
+        uint256 ownerAmount = totalPrize - winnerAmount; // 10%
+        
+        // ==============================================
+        // EFFECTS: State already updated (winner, winnerDrawn)
+        // ==============================================
+        
+        // ==============================================
+        // INTERACTIONS: Send ETH (with re-entrancy protection)
+        // ==============================================
+        // Send 90% to winner
+        (bool success1, ) = payable(winner).call{value: winnerAmount}("");
+        require(success1, "Winner transfer failed");
+        
+        // Send 10% to owner
+        (bool success2, ) = payable(owner).call{value: ownerAmount}("");
+        require(success2, "Owner transfer failed");
+        
+        // Emit event
+        emit RaffleWinner(winner, winnerAmount);
     }
 
     // ============ TODO 4: Reset Raffle ============
